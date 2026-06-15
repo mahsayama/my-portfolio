@@ -1,0 +1,27 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Validate HTML structure
+        run: |
+          echo "Checking required files..."
+          test -f index.html || (echo "FAIL: index.html not found" && exit 1)
+          test -f style.css || (echo "FAIL: style.css not found" && exit 1)
+          echo "Files present: PASS"
+
+          echo "Checking HTML structure..."
+          grep -q "<!DOCTYPE html>" index.html || (echo "FAIL: Missing DOCTYPE" && exit 1)
+          grep -q "<html" index.html || (echo "FAIL: Missing html tag" && exit 1)
+          grep -q "<head>" index.html || (echo "FAIL: Missing head tag" && exit 1)
+          grep -q "<body>" index.html || (echo "FAIL: Missing body tag" && exit 1)
+          grep -q "<title>" index.html || (echo "FAIL: Missing title tag" && exit 1)
+          echo "HTML structure: PASS"
+
+          echo "All checks passed!"
